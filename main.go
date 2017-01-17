@@ -21,16 +21,21 @@ func getRandomColor() (color.RGBA, string) {
 
 func main() {
 
-	adaptor := sphero.NewAdaptor("/dev/rfcomm0")
+	directions := []uint16{0, 60, 120, 180, 240, 300}
+	i := 0
+
+	adaptor := sphero.NewAdaptor("/dev/rfcomm1")
 	driver := sphero.NewSpheroDriver(adaptor)
 
 	work := func() {
 		gobot.Every(3*time.Second, func() {
-			driver.Roll(150, uint16(gobot.Rand(360)))
+			dir := directions[i%len(directions)]
+			driver.Roll(200, dir)
 			c, colorName := getRandomColor()
 
 			driver.SetRGB(c.R, c.G, c.B)
-			log.Printf("R: %d G: %d B: %d - %s", c.R, c.G, c.B, colorName)
+			log.Printf("Direction: %d R: %d G: %d B: %d - %s", dir, c.R, c.G, c.B, colorName)
+			i++
 		})
 	}
 
